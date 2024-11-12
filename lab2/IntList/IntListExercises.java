@@ -70,16 +70,20 @@ public class IntListExercises {
         if (lst == null) {
             return false;
         }
+        boolean changed = false;
+        while (lst != null) {
+            boolean currElemIsPrime = Primes.isPrime(lst.first);
+            if (currElemIsPrime) {
+                lst.first *= lst.first;
+                changed = true;
+            }
+            if (lst.rest != null) {
+                lst = lst.rest;
+            } else{
+                return changed;
+            }
 
-        boolean currElemIsPrime = Primes.isPrime(lst.first);
-
-        if (currElemIsPrime) {
-            lst.first *= lst.first;
         }
-        if (lst.rest != null) {
-            return squarePrimes(lst.rest);
-        } else{
-            return currElemIsPrime;
-        }
+        return changed;
     }
 }
