@@ -107,6 +107,7 @@ public class Model extends Observable {
      *    and the trailing tile does not.
      * */
     public boolean tilt(Side side) {
+        board.setViewingPerspective(side);
         boolean changed;
         changed = false;
         int[][] combined = new int[4][4];
@@ -159,6 +160,7 @@ public class Model extends Observable {
                 }
             }
         }
+        board.setViewingPerspective(Side.NORTH);
         checkGameOver();
         if (changed) {
             setChanged();
