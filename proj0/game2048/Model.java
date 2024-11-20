@@ -6,6 +6,8 @@ import java.util.Observable;
 
 /** The state of a game of 2048.
  *  @author Tim Lin
+ *  to be honest, the code is quite ugly because the lack of reading and understanding the function in the file
+ *  maybe make more comprehension next time will make a more elegant code?
  */
 public class Model extends Observable {
     /** Current contents of the board. */
