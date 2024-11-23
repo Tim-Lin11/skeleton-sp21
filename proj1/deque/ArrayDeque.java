@@ -4,19 +4,18 @@ import java.io.ObjectStreamException;
 import java.lang.reflect.Array;
 
 public class ArrayDeque<T> implements Deque<T> {
+    @SuppressWarnings("unchecked")
+    private T[] Array =(T[]) new Object[8];
     private int size;
     private int capacity;
-    private T[] Array;
 
     public ArrayDeque(){
-        @SuppressWarnings("unchecked")
-        T[] Array =(T[]) new Object[8];
-        this.Array=Array;
         size=0;
         capacity=8;
     }
 
     public void resize(int Capacity){
+        @SuppressWarnings("unchecked")
         T[] Brray = (T[]) new Object[Capacity];
         System.arraycopy(Array,0,Brray,0,Capacity/2);
         Array=Brray;
