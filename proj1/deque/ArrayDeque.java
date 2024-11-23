@@ -3,7 +3,7 @@ package deque;
 import java.io.ObjectStreamException;
 import java.lang.reflect.Array;
 
-public class ArrayDeque<T> {
+public class ArrayDeque<T> implements Deque<T> {
     private int size;
     private int capacity;
     private T[] Array;
@@ -18,11 +18,12 @@ public class ArrayDeque<T> {
 
     public void resize(int Capacity){
         T[] Brray = (T[]) new Object[Capacity];
-        System.arraycopy(Array,0,Brray,0,Capacity);
+        System.arraycopy(Array,0,Brray,0,Capacity/2);
         Array=Brray;
         capacity=Capacity;
     }
 
+    @Override
     public void addFirst(T item){
         if(size==capacity){
             resize(capacity*2);
@@ -34,6 +35,7 @@ public class ArrayDeque<T> {
         size++;
     }
 
+    @Override
     public void addLast(T item){
         if(size==capacity){
             resize(capacity*2);
@@ -42,12 +44,11 @@ public class ArrayDeque<T> {
         size++;
     }
 
-    public Object removeFirst(){
+    @Override
+    public T removeFirst(){
         if (size!=0){
             T re = Array[0];
-            T[] Brray =(T[]) new Object[capacity];
-            System.arraycopy(Array,1,Brray,0,size);
-            Array=Brray;
+            System.arraycopy(Array,1, Array,0,size-1);
             size--;
             return re;
         } else {
@@ -55,6 +56,7 @@ public class ArrayDeque<T> {
         }
     }
 
+    @Override
     public T removeLast() {
         if (size != 0) {
             T re =Array[size-1];
@@ -66,21 +68,25 @@ public class ArrayDeque<T> {
         }
     }
 
+    @Override
     public boolean isEmpty(){
         return size==0;
     }
 
+    @Override
     public void printDeque(){
         for(int i=0; i<size;i++){
-            System.out.print(Array[i]);
+            System.out.print(Array[i]+" ");
         }
-        System.out.print("\n");
+        System.out.println("\n");
     }
 
-    public Object get(int Index){
+    @Override
+    public T get(int Index){
         return Array[Index];
     }
 
+    @Override
     public int size(){
         return size;
     }
