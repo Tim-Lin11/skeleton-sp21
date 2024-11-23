@@ -9,7 +9,9 @@ public class ArrayDeque<T> {
     private T[] Array;
 
     public ArrayDeque(){
+        @SuppressWarnings("unchecked")
         T[] Array =(T[]) new Object[8];
+        this.Array=Array;
         size=0;
         capacity=8;
     }
@@ -25,10 +27,10 @@ public class ArrayDeque<T> {
         if(size==capacity){
             resize(capacity*2);
         }
-        T[] Brray =(T[]) new Object[capacity];
-        Brray[0]=item;
-        System.arraycopy(Array,0,Brray,1,size);
-        Array=Brray;
+        if(size>0) {
+            System.arraycopy(Array, 0, Array, 1, size);
+        }
+        Array[0]=item;
         size++;
     }
 
