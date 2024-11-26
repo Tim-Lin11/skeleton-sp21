@@ -1,6 +1,6 @@
 package deque;
 
-public class LinkedListDeque<T>{
+public class LinkedListDeque<T> implements Deque<T>{
     private int size;
     private final Node Sentinel= new Node(null);
     Node recursive_node = Sentinel;
