@@ -1,6 +1,7 @@
 package deque;
 
 import edu.princeton.cs.algs4.In;
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -65,5 +66,17 @@ public class ArrayDequeTest {
         intlist.addFirst(1);
         intlist.addFirst(2);
         assertEquals("should be 1",Integer.valueOf(2),intlist.get(0));
+    }
+
+
+    @Test
+    public void Iteratortest(){
+        ArrayDeque<Integer> intlist = new ArrayDeque<>();
+        intlist.addFirst(3);
+        intlist.addFirst(2);
+        intlist.addFirst(1);
+        for(int i : intlist){
+            System.out.print(i);
+        }
     }
 }

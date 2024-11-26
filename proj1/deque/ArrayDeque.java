@@ -2,8 +2,9 @@ package deque;
 
 import java.io.ObjectStreamException;
 import java.lang.reflect.Array;
+import java.util.Iterator;
 
-public class ArrayDeque<T> implements Deque<T> {
+public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     @SuppressWarnings("unchecked")
     private T[] Array =(T[]) new Object[8];
     private int size;
@@ -12,6 +13,32 @@ public class ArrayDeque<T> implements Deque<T> {
     public ArrayDeque(){
         size=0;
         capacity=8;
+    }
+
+
+    @Override
+    public Iterator<T> iterator() {
+        return new ArrayDequeIterator();
+    }
+
+    public class ArrayDequeIterator implements Iterator<T>{
+        private int Index=0;
+
+        @Override
+        public boolean hasNext() {
+            return Index<size;
+        }
+
+        @Override
+        public T next() {
+            if(hasNext()){
+                T re = get(Index);
+                Index++;
+                return re;
+            } else {
+                return null;
+            }
+        }
     }
 
     public void resize(int Capacity){
@@ -85,5 +112,4 @@ public class ArrayDeque<T> implements Deque<T> {
     public int size(){
         return size;
     }
-
 }
