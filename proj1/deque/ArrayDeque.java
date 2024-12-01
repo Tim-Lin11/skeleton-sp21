@@ -1,5 +1,7 @@
 package deque;
 
+import org.junit.Test;
+
 import java.io.ObjectStreamException;
 import java.lang.reflect.Array;
 import java.util.Iterator;
@@ -21,7 +23,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         return new ArrayDequeIterator();
     }
 
-    public class ArrayDequeIterator implements Iterator<T>{
+    private class ArrayDequeIterator implements Iterator<T>{
         private int Index=0;
 
         @Override
@@ -41,7 +43,30 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
     }
 
-    public void resize(int Capacity){
+    @Override
+    public boolean equals(Object o){
+        if (o==null) { return false; }
+        else if (!(o instanceof Deque)) { return false; }
+        ArrayDeque<?> list = (ArrayDeque<?>) o;
+        if(size!=list.size()) { return false; }
+        for(int i=0;i<size;i++){
+            if(get(i)!=list.get(i)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void shrinksize(){
+        if(size==0){
+            resize(8);
+        } else if (capacity/4 > size && size>8) {
+            resize(capacity/4);
+        }
+    }
+
+
+    private void resize(int Capacity){
         @SuppressWarnings("unchecked")
         T[] Brray = (T[]) new Object[Capacity];
         System.arraycopy(Array,0,Brray,0,Capacity/2);

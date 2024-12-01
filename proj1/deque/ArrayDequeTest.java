@@ -79,4 +79,17 @@ public class ArrayDequeTest {
             System.out.print(i);
         }
     }
+
+    @Test
+    public void equaltest(){
+        ArrayDeque<Integer> intlist = new ArrayDeque<>();
+        int[] intlist2 =new int[3];
+        intlist2[0]=3;
+        intlist2[1]=2;
+        intlist2[2]=1;
+        intlist.addFirst(1);
+        intlist.addFirst(2);
+        intlist.addFirst(3);
+        Assert.assertEquals("should be equal",true,intlist2.equals(intlist));
+    }
 }
