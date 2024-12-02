@@ -1,11 +1,9 @@
 package deque;
-import java.lang.reflect.Type;
 import java.util.Iterator;
 
 public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     private int size;
     private final Node Sentinel= new Node(null);
-    private Node recursive_node = Sentinel;
 
     @Override
     public Iterator<T> iterator() {
@@ -120,7 +118,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     @Override
     public boolean equals(Object o){
         if (o==null) { return false; }
-        else if (!(o instanceof Deque)) { return false; }
+        else if (!(o instanceof LinkedListDeque)) { return false; }
         LinkedListDeque<?> list = (LinkedListDeque<?>) o;
         if(size!=list.size()) { return false; }
         for(int i=0;i<size;i++){
@@ -146,15 +144,18 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     }
 
     public T getRecursive(int index){
-        if (index>size-1){
-            return null;
-        } else if (index==0){
-            T re = recursive_node.data;
-            recursive_node=Sentinel;
-            return re;
+        if (index <= size) {
+            return help_getRecursive(index, Sentinel.next);
         } else {
-            recursive_node=recursive_node.next;
-            return getRecursive(index-1);
+            return null;
+        }
+    }
+
+    public T help_getRecursive(int index, Node node){
+        if (index==0){
+            return node.data;
+        } else {
+            return help_getRecursive(index-1, node.next);
         }
     }
 }

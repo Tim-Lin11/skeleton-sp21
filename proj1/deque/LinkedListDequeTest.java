@@ -1,5 +1,6 @@
 package deque;
 
+import edu.princeton.cs.algs4.StdRandom;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -122,13 +123,50 @@ public class LinkedListDequeTest {
 
 
     @Test
-    public void iteratortest(){
+    public void iterator_test(){
         LinkedListDeque<Integer> intlist = new LinkedListDeque<>();
         intlist.addFirst(3);
         intlist.addFirst(2);
         intlist.addFirst(1);
         for(int i : intlist){
             System.out.print(i);
+        }
+    }
+
+    @Test
+    public void get_recur_test(){
+        LinkedListDeque<Integer> intlist = new LinkedListDeque<>();
+        for(int i=0;i<7;i++){
+            intlist.addLast(i);
+        }
+        assertEquals("should be 3",Integer.valueOf(6),intlist.getRecursive(6));
+    }
+
+    @Test
+    public void randomizedTest() {
+        LinkedListDeque<Integer> linkedListDeque = new LinkedListDeque<>();
+
+        int N = 1000000;
+        for (int i = 0; i < N; i += 1) {
+            int operationNumber = StdRandom.uniform(0, 6);
+            if (operationNumber == 0) {
+                int randVal = StdRandom.uniform(0, 100);
+                linkedListDeque.addFirst(randVal);
+            } else if (operationNumber == 1) {
+                int randVal = StdRandom.uniform(0, 100);
+                linkedListDeque.addLast(randVal);
+            } else if (linkedListDeque.size() == 0) {
+                assertTrue(linkedListDeque.isEmpty());
+            } else if (operationNumber == 2) {
+                assertTrue(linkedListDeque.size() > 0);
+            } else if (operationNumber == 3) {
+                linkedListDeque.removeFirst();
+            } else if (operationNumber == 4) {
+                linkedListDeque.removeLast();
+            } else if (operationNumber == 5) {
+                int randIndex = StdRandom.uniform(0, linkedListDeque.size());
+                linkedListDeque.get(randIndex);
+            }
         }
     }
 }

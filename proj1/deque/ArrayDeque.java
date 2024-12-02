@@ -1,9 +1,5 @@
 package deque;
 
-import org.junit.Test;
-
-import java.io.ObjectStreamException;
-import java.lang.reflect.Array;
 import java.util.Iterator;
 
 public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
@@ -101,6 +97,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             T re = Array[0];
             System.arraycopy(Array,1, Array,0,size-1);
             size--;
+            shrinksize();
             return re;
         } else {
             return null;
@@ -113,6 +110,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             T re =Array[size-1];
             Array[size-1] = null;
             size--;
+            shrinksize();
             return re;
         } else {
             return null;

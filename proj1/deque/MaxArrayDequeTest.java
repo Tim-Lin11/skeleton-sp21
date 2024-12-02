@@ -3,7 +3,6 @@ package deque;
 import org.junit.Assert;
 import org.junit.Test;
 import java.util.Comparator;
-import org.junit.Assert.*;
 
 public class MaxArrayDequeTest {
 
