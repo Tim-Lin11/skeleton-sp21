@@ -136,4 +136,14 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     public int size(){
         return size;
     }
+
+
+    public int getFirst() {
+        for(int i = 0; i < size;i++) {
+            if(get(i)!=null){
+                return i;
+            }
+        }
+        return 0;
+    }
 }
