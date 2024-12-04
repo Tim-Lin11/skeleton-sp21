@@ -65,7 +65,8 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     private void resize(int Capacity){
         @SuppressWarnings("unchecked")
         T[] Brray = (T[]) new Object[Capacity];
-        System.arraycopy(Array,0,Brray,0,Capacity/2);
+        int first = getFirst();
+        System.arraycopy(Array,first,Brray,0,size);
         Array=Brray;
         capacity=Capacity;
     }
@@ -95,7 +96,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     public T removeFirst(){
         if (size!=0){
             T re = Array[0];
-            System.arraycopy(Array,1, Array,0,size-1);
+            System.arraycopy(Array,1, Array,0,capacity-1);
             size--;
             shrinksize();
             return re;

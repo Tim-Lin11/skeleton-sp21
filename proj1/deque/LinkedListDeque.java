@@ -151,7 +151,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         }
     }
 
-    public T help_getRecursive(int index, Node node){
+    private T help_getRecursive(int index, Node node){
         if (index==0){
             return node.data;
         } else {

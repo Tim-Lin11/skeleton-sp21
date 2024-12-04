@@ -7,6 +7,19 @@ import java.util.Comparator;
 public class MaxArrayDequeTest {
 
     @Test
+    public void removeTest(){
+        Comparator<Integer> c = (a,b) -> a-b;
+        MaxArrayDeque<Integer> intlist = new MaxArrayDeque<>(c);
+        for(int i = 0;i < 1000; i++){
+            intlist.addLast(i);
+        }
+        for(int i = 0;i < 1000; i++) {
+            int re = intlist.removeFirst();
+            Assert.assertEquals(i,re);
+        }
+    }
+
+    @Test
     public void simp1eTest(){
         Comparator<Integer> c = (a,b) -> a-b;
 
