@@ -7,7 +7,7 @@ import java.util.*;
  * @param <K> the key of the node
  * @param <V> the value of the node.
  */
-public class BSTMap<K extends Comparable,V> implements Map61B<K,V> {
+public class BSTMap<K extends Comparable<K>,V> implements Map61B<K,V> {
     private Node sentinel_node;
     private int size = 0;
 
@@ -110,16 +110,17 @@ public class BSTMap<K extends Comparable,V> implements Map61B<K,V> {
         // if the key is smaller than the current node's key, go left
         if (ky.compareTo(insert_node.key) > 0) {
             curr_node.left = put_helper(insert_node, curr_node.left);
+            return curr_node;
         }
         // if the key is smaller than the current node's key, go right.
         else if (ky.compareTo(insert_node.key) < 0) {
             curr_node.right = put_helper(insert_node, curr_node.right);
+            return curr_node;
         }
         else {
             curr_node.value = insert_node.value;
+            return curr_node;
         }
-
-        return insert_node;
     }
 
     @Override
@@ -137,5 +138,15 @@ public class BSTMap<K extends Comparable,V> implements Map61B<K,V> {
         throw new UnsupportedOperationException();
     }
 
+    public void printInOrder() {
+        print_helper(sentinel_node.left);
+    }
 
+    private void print_helper(Node curr_node) {
+        if (curr_node != null) {
+            print_helper(curr_node.left);
+            System.out.println(curr_node.value);
+            print_helper(curr_node.right);
+        }
+    }
 }
