@@ -110,17 +110,15 @@ public class BSTMap<K extends Comparable<K>,V> implements Map61B<K,V> {
         // if the key is smaller than the current node's key, go left
         if (ky.compareTo(insert_node.key) > 0) {
             curr_node.left = put_helper(insert_node, curr_node.left);
-            return curr_node;
         }
         // if the key is smaller than the current node's key, go right.
         else if (ky.compareTo(insert_node.key) < 0) {
             curr_node.right = put_helper(insert_node, curr_node.right);
-            return curr_node;
         }
         else {
             curr_node.value = insert_node.value;
-            return curr_node;
         }
+        return curr_node;
     }
 
     @Override
