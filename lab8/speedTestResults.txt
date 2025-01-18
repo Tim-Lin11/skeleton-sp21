@@ -1,0 +1,44 @@
+InsertOrderSpeedTest:
+Enter # strings to insert into hashmap.ULLMap: Test
+Please enter a positive integer: 12000
+class hashmap.ULLMap: 0.31 sec
+
+Enter # strings to insert into hashmap.MyHashMap: Test
+Please enter a positive integer: 12000
+class hashmap.MyHashMap: 0.02 sec
+
+Enter # strings to insert into Java's HashMap: Test
+Please enter a positive integer: 12000
+Java's Built-in HashMap: 0.01 sec
+
+InsertRandomSpeedTest:
+This program inserts random Strings of length L
+ Into different types of maps as <String, Integer> pairs.
+
+What would you like L to be?: Test
+Please enter a positive integer: 12000
+
+Enter # strings to insert into hashmap.ULLMap: #
+Please enter a positive integer: 12000
+class hashmap.ULLMap: 1.57 sec
+
+Enter # strings to insert into your hashmap.MyHashMap: #
+Please enter a positive integer: 12000
+class hashmap.MyHashMap: 1.02 sec
+
+Enter # strings to insert into Java's HashMap: #
+Please enter a positive integer: 12000
+Java's Built-in HashMap: 1.03 sec
+
+
+
+What would you like L to be?: Test
+Please enter a positive integer: 12000
+
+Enter # strings to insert into each map: #
+Please enter a positive integer: 12000
+class hashmap.MyHashMapALBuckets: 1.07 sec
+class hashmap.MyHashMapLLBuckets: 1.02 sec
+class hashmap.MyHashMapTSBuckets: 1.04 sec
+class hashmap.MyHashMapHSBuckets: 1.02 sec
+class hashmap.MyHashMapPQBuckets: 1.02 sec
