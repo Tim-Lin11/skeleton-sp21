@@ -1,13 +1,11 @@
 package gitlet;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 
 import static gitlet.Repository.*;
 import static gitlet.Utils.error;
-import static gitlet.Utils.sha1;
 
 /** Driver class for Gitlet, a subset of the Git version-control system.
  *  @author Tim lin

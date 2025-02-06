@@ -2,6 +2,7 @@ package gitlet;
 
 import javax.crypto.Cipher;
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
@@ -214,21 +215,12 @@ public class Repository {
         if (branchName.equals(getMaster().getMsg())) {
             throw error("No need to checkout the current branch.");
         }
-        boolean checked = false;
-        for (String name : Utils.plainFilenamesIn(REFS_DIR)) {
-            if (Objects.equals(name, branchName)) {
-                File file = Utils.join(REFS_DIR, name);
-                Pointer branch = Utils.readObject(file, Pointer.class);
-                if (branch.isBranch()) {
-                    File HEAD = Utils.join(GITLET_DIR, "HEAD");
-                    Utils.writeObject(HEAD, branch);
-                    checked = true;
-                }
-            }
-        }
-        if (!checked) {
+        Pointer branch = findBranch(branchName);
+        if (branch == null) {
             throw error("No such branch exists.");
         }
+        File HEAD = Utils.join(GITLET_DIR, "HEAD");
+        Utils.writeObject(HEAD, branch);
         // Clear all the tracked but not tracked by this branch file
         Commit head = getMasterByCommit();
         for (String name : Utils.plainFilenamesIn(CWD)) {
@@ -244,6 +236,19 @@ public class Repository {
                 }
             }
         }
+    }
+
+    private static Pointer findBranch(String branchName) {
+        for (String name : Utils.plainFilenamesIn(REFS_DIR)) {
+            if (Objects.equals(name, branchName)) {
+                File file = Utils.join(REFS_DIR, name);
+                Pointer branch = Utils.readObject(file, Pointer.class);
+                if (branch.isBranch()) {
+                    return branch;
+                }
+            }
+        }
+        return null;
     }
 
     /** Check a file is tracked and commited by and Commit. */
@@ -329,6 +334,112 @@ public class Repository {
                 }
             }
         }
+    }
+
+    /** 1. Any files that have been modified in the given branch since the split point
+     *  but not modified in the current branch since the split point
+     *  should be changed to their versions in the given branch
+     *  (checked out from the commit at the front of the given branch).
+     *  These files should then all be automatically staged.
+     *  **Content**----
+     * <p>
+     *  2. Any files that have been modified in the current branch
+     *  but not in the given branch since the split point should stay as they are.
+     *  **Content**----
+     * <p>
+     *  3. Any files that have been modified in both the current and given branch in the same way
+     *  (i.e., both files now have the same content or were both removed)
+     *  are left unchanged by the merge.
+     *  If a file was removed from both the current and given branch,
+     *  but a file of the same name is present in the working directory,
+     *  it is left alone and continues to be absent (not tracked nor staged) in the merge.
+     *  **Content**----
+     * <p>
+     *  4. Any files that were not present at the split point
+     *  and are present only in the current branch should remain as they are.
+     *  **Delete**----
+     * <p>
+     *  5. Any files that were not present at the split point
+     *  and are present only in the given branch should be checked out and staged.
+     *  **Delete**---
+     * <p>
+     *  6. Any files present at the split point, unmodified in the current branch,
+     *  and absent in the given branch should be removed (and untracked).
+     *  **Delete**
+     * <p>
+     *  7. Any files present at the split point, unmodified in the given branch,
+     *  and absent in the current branch should remain absent.
+     *  **Delete**----
+     * <p>
+     *  8. Any files modified in different ways in the current and given branches are in conflict.
+     *   In this case, replace the contents of the conflicted file with
+     *   **Content**----
+     *   */
+    public static void merge(String branchName) {
+        //check if the split point is one of two branches
+        Commit head = getMasterByCommit();
+        Commit branch = findBranch(branchName).getCommit();
+        Commit split;
+        HashSet<Commit> findSplit = new HashSet<>();
+        findSplit.add(head);
+        findSplit.add(branch);
+        while (findSplit.size() != 1) {
+            getLatest(findSplit);
+        }
+        split = (Commit) findSplit.toArray()[0];
+        if (split.equals(head)) {
+            System.out.println("Current branch fast-forwarded.");
+            Pointer HEAD = new Pointer(getMaster().getMsg(), branch);
+            File headFile = Utils.join(GITLET_DIR, "HEAD");
+            Utils.writeObject(headFile, HEAD);
+            removeBranch(branchName);
+        } else if (split.equals(branch)) {
+            System.out.println("Given branch is an ancestor of the current branch.");
+            removeBranch(branchName);
+        } else {
+            mergeHelper(branch, split);
+            Commit mergeCommit = new Commit("Merged "+ branchName + " into " + getMaster().getMsg() + ".");
+            mergeCommit.setMergeParent(branch);
+        }
+    }
+
+    private static void mergeHelper(Commit branch, Commit split) {
+        Commit head = getMasterByCommit();
+        for (String name: split.getKeySets()) {
+            if (head.getFilesMap().containsKey(name) && !branch.getFilesMap().containsKey(name)) {
+                if (head.getFilesMap().get(name).equals(split.getFilesMap().get(name))) {
+                    File headFile = Utils.join(GITLET_DIR, name);
+                    headFile.delete();
+                    head.getFilesMap().remove(name);
+                }
+            }
+        }
+        for (String name : branch.getKeySets()) {
+            String branchContent = branch.getFilesMap().get(name);
+            boolean inSplit = split.getFilesMap().containsKey(name);
+            boolean inHead = head.getFilesMap().containsKey(name);
+            String headContent = head.getFilesMap().get(name);
+            String SplitContent = split.getFilesMap().get(name);
+            if (!inHead && !inSplit) { //case 5
+                stageHelper(name, branch);
+            } else if (!branchContent.equals(headContent) && headContent.equals(SplitContent)) {// case 1
+                stageHelper(name, branch);
+            } else if (!branchContent.equals(headContent)) {
+                File headFile = Utils.join(BLOBS_DIR, headContent);
+                File BranchFile = Utils.join(BLOBS_DIR, branchContent);
+                String newStr = "<<<<<<< HEAD\n" + Arrays.toString(readContents(headFile)) + "======="
+                        + Arrays.toString(readContents(BranchFile)) + ">>>>>>>";
+                File file = Utils.join(STAGED_DIR, name);
+                Utils.writeContents(file, newStr);
+            }
+        }
+    }
+
+    /** Help stage a file in merge. */
+    private static void stageHelper(String name, Commit branch) {
+        File file = Utils.join(STAGED_DIR, name);
+        File blob = Utils.join(BLOBS_DIR, branch.getFilesMap().get(name));
+        Utils.writeObject(file, Utils.readContents(blob));
     }
 
     /** Return the SHA-1 code of a file, computed by the content of the file. */

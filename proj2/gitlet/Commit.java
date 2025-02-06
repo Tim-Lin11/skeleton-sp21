@@ -38,7 +38,7 @@ public class Commit implements Serializable {
     /** The message of this Commit. */
     private String message;
     /** A Map mapping name to its SHA-1 code of the file */
-    public HashMap<String, String> filesMap;
+    private HashMap<String, String> filesMap;
     /** The parent commit of this commit */
     private String parent;
     /** The merge parent of this commit, usually null. */
