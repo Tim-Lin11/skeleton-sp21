@@ -2,10 +2,8 @@ package gitlet;
 
 import javax.crypto.Cipher;
 import java.io.File;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Objects;
+import java.sql.Ref;
+import java.util.*;
 
 import static gitlet.Commit.shaCommit;
 import static gitlet.Utils.*;
@@ -141,8 +139,18 @@ public class Repository {
             }
         }
         Refs.remove(Latest);
-        if (Latest.getParent() != null) {
-            Refs.add(Latest.getCommitParent());
+        Commit Parent = Latest.getCommitParent();
+        boolean equals = false;
+        if (Parent != null) {
+            for (Commit commits : Refs) {
+                if (commits.getMessage().equals(Parent.getMessage())) {
+                    equals = true;
+                    break;
+                }
+            }
+            if (!equals) {
+                Refs.add(Parent);
+            }
         }
         return Latest;
     }
@@ -310,6 +318,7 @@ public class Repository {
             if (branch.getMsg().equals(msg)) {
                 branch.rmBranch();
                 isRemoved = true;
+                Utils.writeObject(Branch, branch);
             }
         }
         if (!isRemoved) {
@@ -377,8 +386,23 @@ public class Repository {
      *   */
     public static void merge(String branchName) {
         //check if the split point is one of two branches
+        if (Utils.plainFilenamesIn(STAGED_DIR).isEmpty()) {
+            throw error("You have uncommitted changes.");
+        }
         Commit head = getMasterByCommit();
-        Commit branch = findBranch(branchName).getCommit();
+        Pointer Branch = findBranch(branchName);
+        if (Branch == null || !Branch.isBranch()) {
+            throw error("A branch with that name does not exist.");
+        }
+        Commit branch = Branch.getCommit();
+        if (getMaster().getMsg().equals(branchName)) {
+            throw error("Cannot merge a branch with itself.");
+        }
+        for (String file : Utils.plainFilenamesIn(CWD)) {
+            if (!head.getKeySets().contains(file)) {
+                throw error("There is an untracked file in the way; delete it, or add and commit it first.");
+            }
+        }
         Commit split;
         HashSet<Commit> findSplit = new HashSet<>();
         findSplit.add(head);
@@ -392,13 +416,12 @@ public class Repository {
             Pointer HEAD = new Pointer(getMaster().getMsg(), branch);
             File headFile = Utils.join(GITLET_DIR, "HEAD");
             Utils.writeObject(headFile, HEAD);
-            removeBranch(branchName);
         } else if (split.equals(branch)) {
             System.out.println("Given branch is an ancestor of the current branch.");
-            removeBranch(branchName);
         } else {
             mergeHelper(branch, split);
             Commit mergeCommit = new Commit("Merged "+ branchName + " into " + getMaster().getMsg() + ".");
+            System.out.println("Encountered a merge conflict.");
             mergeCommit.setMergeParent(branch);
         }
     }

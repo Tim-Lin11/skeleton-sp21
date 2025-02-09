@@ -99,11 +99,16 @@ public class Main {
                 reset(args[1]);
                 break;
             case "merge":
-
+                checkLength(args, 2, null);
+                merge(args[1]);
                 break;
             case "debug":
-                System.out.println(getMaster().getMsg());
-                System.out.println(getMasterByCommit().getKeySets());
+                String name = args[1];
+                for (String code : Utils.plainFilenamesIn(REFS_DIR)) {
+                    File se = Utils.join(REFS_DIR, code);
+                    Pointer second = Utils.readObject(se, Pointer.class);
+                    System.out.println(second.isBranch());
+                }
                 break;
             default:
                 throw error("No command with that name exists.");
