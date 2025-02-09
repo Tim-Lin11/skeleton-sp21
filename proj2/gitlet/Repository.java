@@ -1,8 +1,7 @@
 package gitlet;
 
-import javax.crypto.Cipher;
 import java.io.File;
-import java.sql.Ref;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static gitlet.Commit.shaCommit;
@@ -125,7 +124,10 @@ public class Repository {
             if (latest.getMergeParent() != null) {
                 newStr += "Merge: " + latest.getParent() + " " + latest.getMergeParent() + "\n";
             }
-            newStr += "Date: " + latest.getTimeStamp().toString();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z", Locale.ENGLISH);
+            dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+            String formattedDate = dateFormat.format(latest.getTimeStamp());
+            newStr += "Date: " + formattedDate;
             newStr += "\n" + latest.getMessage() + "\n";
             System.out.println(newStr);
         }
