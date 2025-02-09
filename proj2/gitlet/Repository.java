@@ -162,8 +162,12 @@ public class Repository {
         for (String code : Utils.plainFilenamesIn(COMMITS_DIR)) {
             File name = Utils.join(COMMITS_DIR, code);
             Commit Master = Utils.readObject(name, Commit.class);
-            String str ="===" + "\n" + "commit " + shaCommit(Master) + "\nDate: "
-                    + Master.getTimeStamp().toString() + "\n" + Master.getMessage() + "\n";
+            String str ="===" + "\n" + "commit " + shaCommit(Master) + "\nDate: ";
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z", Locale.ENGLISH);
+            dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+            String formattedDate = dateFormat.format(Master.getTimeStamp());
+            str += "Date: " + formattedDate;
+            str += "\n" + Master.getMessage() + "\n";
             System.out.println(str);
         }
     }
